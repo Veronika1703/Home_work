@@ -1,8 +1,11 @@
+const productModel=require('../models/product');
 module.exports={
+
 GetAll:(req,res)=>{
         try{
-            return res.status(200).json({msg:"All Products"});
-    
+            productModel.find().then((products)=>{
+                return res.status(200).json(products);
+            });  
         }
         catch
         {
@@ -12,43 +15,46 @@ GetAll:(req,res)=>{
 },
 GetById:(req,res)=>{
     try{
-        return res.status(200).json({msg:`Get Product Id ${req.params.id}`});
-
+        productModel.find({pid:req.params.id}).then((product)=>{
+            return res.status(200).json(product);
+        });
     }
     catch
     {
        return res.status(500).json({msg:"500 Server Error"});
     }
 },
-AddNew:(req,res)=>{
+AddNew: (req, res) => {
     try{
-        return res.status(200).json({msg:"Add New Product",body:req.body});
+        productModel.insertMany([req.body]).then((data)=>{
+            return res.status(200).json(data)
+        });
+    }
+    catch{
+        return res.status(500).json({msg : "500 server error"});
+    }
 
-    }
-    catch
-    {
-       return res.status(500).json({msg:"500 Server Error"});
-    }
 },
-Update:(req,res)=>{
+Update:(req,res) => {
     try{
-        return res.status(200).json({msg:`Update Product${req.params.id}`});
-    
-
+        productModel.updateOne({pid:req.params.id},req.body).then((data) =>{
+            return res.status(200).json(data);
+        });
     }
-    catch
-    {
-       return res.status(500).json({msg:"500 Server Error"});
+    catch{
+        return res.status(500).json({msg : "500 server error"});
     }
 },
 Delete:(req,res)=>{
     try{
-        return res.status(200).json({msg:`Delete Product${req.params.id}`});
+        productModel.deleteOne({pid:req.params.id}).then((data)=>{
+        return res.status(200).json(data);
     
-
+    });
     }
     catch
     {
        return res.status(500).json({msg:"500 Server Error"});
     }
 }
+};
